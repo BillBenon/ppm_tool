@@ -20,13 +20,16 @@ public class ProjectTaskService {
         projectTask.setBacklog(backlog);
         Integer BacklogSequence = backlog.getPTSequence();
         BacklogSequence++;
+
+        backlog.setPTSequence(BacklogSequence);
+
         projectTask.setProjectSequence(projectIdentifier + "-" + BacklogSequence);
         projectTask.setProjectIdentifier(projectIdentifier);
-//        if (projectTask.getPriority() == 0 || projectTask.getPriority() == null) {
-//            projectTask.setPriority(3);
-//        }
         if (projectTask.getStatus() == "" || projectTask.getStatus() == null) {
             projectTask.setStatus("TO_DO");
+        }
+        if (projectTask.getPriority() == null) {
+            projectTask.setPriority(3);
         }
         return projectTaskRepository.save(projectTask);
 
