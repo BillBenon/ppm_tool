@@ -1,6 +1,5 @@
 package io.billbenon.ppmtool.web;
 
-import io.billbenon.ppmtool.domain.Project;
 import io.billbenon.ppmtool.domain.ProjectTask;
 import io.billbenon.ppmtool.services.MapValidationErrorService;
 import io.billbenon.ppmtool.services.ProjectTaskService;
