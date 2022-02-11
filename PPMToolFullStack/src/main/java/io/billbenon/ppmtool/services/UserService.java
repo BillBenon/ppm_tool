@@ -1,6 +1,7 @@
 package io.billbenon.ppmtool.services;
 
 import io.billbenon.ppmtool.domain.User;
+import io.billbenon.ppmtool.exceptions.UsernameAlreadyExistsException;
 import io.billbenon.ppmtool.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,11 +16,16 @@ public class UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public User saveUser(User newUser) {
-        newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+        try{
+            newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+            // username has to be unique (exception)
+            newUser.setUsername(newUser.getUsername());
+            newUser.setConfirmPassword("");
 
-        // username has to be unique (exception)
-
-        // Make sure that password and confirm password match
-        return userRepository.save(newUser);
+            // Make sure that password and confirm password match
+            return userRepository.save(newUser);
+        } catch (Exception e) {
+            throw new UsernameAlreadyExistsException("Username '" + newUser.getUsername() + "' already exists");
+        }
     }
 }
