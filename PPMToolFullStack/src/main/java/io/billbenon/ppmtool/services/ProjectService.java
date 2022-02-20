@@ -4,6 +4,7 @@ import io.billbenon.ppmtool.domain.Backlog;
 import io.billbenon.ppmtool.domain.Project;
 import io.billbenon.ppmtool.domain.User;
 import io.billbenon.ppmtool.exceptions.ProjectIdException;
+import io.billbenon.ppmtool.exceptions.ProjectNotFoundException;
 import io.billbenon.ppmtool.repositories.BacklogRepository;
 import io.billbenon.ppmtool.repositories.ProjectRepository;
 import io.billbenon.ppmtool.repositories.UserRepository;
@@ -45,23 +46,23 @@ public class ProjectService {
         }
     }
 
-    public Project findProjectByIdentifier(String projectId) {
+    public Project findProjectByIdentifier(String projectId, String username) {
         Project project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
         if (project == null) {
             throw new ProjectIdException("Project ID '" + projectId + "' does not exist");
         }
+        if (!project.getProjectLeader().equals(username)) {
+            throw new ProjectNotFoundException("Project not found in your account");
+        }
         return project;
     }
 
-    public Iterable<Project> findAllProjects() {
-        return projectRepository.findAll();
+    public Iterable<Project> findAllProjects(String username) {
+        return projectRepository.findAllByProjectLeader(username);
     }
 
-    public void deleteProjectByIdentifier(String projectId) {
-        Project project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
-        if (project == null) {
-            throw new ProjectIdException("Cannot delete Project with ID '" +projectId + "'. This project does not exist.");
-        }
-        projectRepository.delete(project);
+    public void deleteProjectByIdentifier(String projectId, String username) {
+
+        projectRepository.delete(findProjectByIdentifier(projectId, username));
     }
 }
